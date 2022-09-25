@@ -87,6 +87,7 @@ public class Main {
                 printNode(childNode);
                 if(isSolved(childNode.mat)) {
                     System.out.println("SOLVED");
+                    printMat(childNode.mat);
                     break;
                 }
             }
@@ -101,6 +102,7 @@ public class Main {
                 // if we reach the target element just break the loop
                 if(isSolved(childNode.mat)) {
                     System.out.println("SOLVED");
+                    printMat(childNode.mat);
                     break;
                 }
             }
@@ -115,6 +117,7 @@ public class Main {
                 // if we reach the target element just break the loop
                 if(isSolved(childNode.mat)) {
                     System.out.println("Solved");
+                    printMat(childNode.mat);
                     break;
                 }
             }
@@ -129,6 +132,7 @@ public class Main {
                 // if we reach the target element just break the loop
                 if(isSolved(childNode.mat)) {
                     System.out.println("Solved");
+                    printMat(childNode.mat);
                     break;
                 }
             }
@@ -180,15 +184,17 @@ public class Main {
     }
 
     static boolean isSolved(int mat[][]) {
-        boolean ans = false;
+        boolean ans = true;
         int finalMat[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (mat[i][j] == finalMat[i][j]) {
-                    ans = true;
-                } else {
-                    ans = false;
-                    break;
+            if(ans == true) {
+                for (int j = 0; j < 3; j++) {
+                    if (mat[i][j] == finalMat[i][j]) {
+                        ans = true;
+                    } else {
+                        ans = false;
+                        break;
+                    }
                 }
             }
         }

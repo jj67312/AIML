@@ -54,20 +54,84 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = 3;
-        int mat[][] = new int[3][3];
+
         int finalMat[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        int mat[][] = new int [3][3];
+
+        boolean solvable = false;
+        int[] inversionArray = new int[n * n];
+        int k = 0;
+        int blankSpace = 0;
+
+        System.out.println("Enter the matrix to be solved:\n");
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 mat[i][j] = sc.nextInt();
+                inversionArray[k] = mat[i][j];
+                k++;
+                if (mat[i][j] == 0)
+                    blankSpace = n - i;
             }
         }
 
+        // Calculate the number of inversions:
+        int inversions = 0;
+        for (int i = 0; i < n * n - 1; i++) {
+            for (int j = i + 1; j < n * n; j++) {
+                if (inversionArray[i] > inversionArray[j] &&
+                        inversionArray[i] != 0 &&
+                        inversionArray[j]
+                                != 0) {
+                    inversions++;
+                }
+            }
+        }
+
+        System.out.println("No of inversions = " + inversions);
+        System.out.println("No of blank spaces = " + blankSpace);
+
+        // Check for all conditions if 8 puzzle is solvable:
+
+        if (n % 2 == 1) {
+            if (inversions % 2 == 0) {
+                System.out.println("Sum is solvable");
+                solvable = true;
+            } else {
+                System.out.println("Sum is not solvable");
+                solvable = false;
+            }
+        } else if (n % 2 == 0) {
+            if (blankSpace % 2 == 0 && inversions % 2 == 1) {
+                System.out.println("Sum is solvable");
+                solvable = true;
+            } else if (blankSpace % 2 == 1 && inversions % 2 == 0) {
+                System.out.println("Sum is solvable");
+                solvable = true;
+                System.out.println();
+            } else {
+                System.out.println("Sum is not solvable");
+                solvable = false;
+            }
+        }
+
+        if (solvable) {
+            solve(mat, n);
+        } else {
+            System.out.println("Unsolvable");
+            System.exit(0);
+        }
+
+        sc.close();
+    }
+
+    static void solve(int mat[][], int n) {
         Node srcNode = new Node(mat, calHVal(mat), null);
         printNode(srcNode);
 
         PriorityQueue<Node> open = new PriorityQueue<>(new Checker());
         Queue<Node> closed = new LinkedList<>();
+        Queue<Node> finalPath = new LinkedList<>();
 
         // have srcNode
         // generate all possible child nodes and enter them in open,
@@ -76,18 +140,21 @@ public class Main {
         // repeat the steps till srcNode == is target matrix
 
         while (!isSolved(srcNode.mat)) {
-
             closed.add(srcNode);
+            finalPath.add(srcNode);
+
             // shift empty to up:
             if (srcNode.rEmpty != 0) {
                 String shiftPos = "up";
                 Node childNode = generateNewNode(srcNode, shiftPos, getCopy(srcNode.mat));
                 open.add(childNode);
-                // if we reach the target element just break the loop
                 printNode(childNode);
-                if(isSolved(childNode.mat)) {
+
+                // if we reach the target element just break the loop
+                if (isSolved(childNode.mat)) {
                     System.out.println("SOLVED");
                     printMat(childNode.mat);
+                    finalPath.add(childNode);
                     break;
                 }
             }
@@ -100,9 +167,10 @@ public class Main {
                 printNode(childNode);
 
                 // if we reach the target element just break the loop
-                if(isSolved(childNode.mat)) {
+                if (isSolved(childNode.mat)) {
                     System.out.println("SOLVED");
                     printMat(childNode.mat);
+                    finalPath.add(childNode);
                     break;
                 }
             }
@@ -115,9 +183,10 @@ public class Main {
                 printNode(childNode);
 
                 // if we reach the target element just break the loop
-                if(isSolved(childNode.mat)) {
+                if (isSolved(childNode.mat)) {
                     System.out.println("Solved");
                     printMat(childNode.mat);
+                    finalPath.add(childNode);
                     break;
                 }
             }
@@ -130,9 +199,10 @@ public class Main {
                 printNode(childNode);
 
                 // if we reach the target element just break the loop
-                if(isSolved(childNode.mat)) {
+                if (isSolved(childNode.mat)) {
                     System.out.println("Solved");
                     printMat(childNode.mat);
+                    finalPath.add(childNode);
                     break;
                 }
             }
@@ -141,8 +211,13 @@ public class Main {
             srcNode = open.poll();
         }
 
-
-        sc.close();
+        System.out.println();
+        System.out.println("**********************************************************");
+        System.out.println();
+        System.out.println("Final path:");
+        for(Node element: finalPath) {
+            printNode(element);
+        }
     }
 
     static Node generateNewNode(Node parentNode, String shiftPos, int parentMat[][]) {
@@ -187,7 +262,7 @@ public class Main {
         boolean ans = true;
         int finalMat[][] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
         for (int i = 0; i < 3; i++) {
-            if(ans == true) {
+            if (ans == true) {
                 for (int j = 0; j < 3; j++) {
                     if (mat[i][j] == finalMat[i][j]) {
                         ans = true;
